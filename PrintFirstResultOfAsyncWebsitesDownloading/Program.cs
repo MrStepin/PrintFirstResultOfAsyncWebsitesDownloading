@@ -15,7 +15,7 @@ namespace PrintFirstResultOfAsyncWebsitesDownloading
             var client = new HttpClient();
             Console.WriteLine("Enter list of URL for downloading and separate them by space:");
             string[] urls = (Console.ReadLine()).Split(' ');
-            List<Task> tasks = new List<Task> { };
+            List<Task<HttpResponseMessage>> tasks = new List<Task<HttpResponseMessage>> { };
             foreach (string url in urls)
             {
                 tasks.Add(Task.Run(async () =>
@@ -23,8 +23,8 @@ namespace PrintFirstResultOfAsyncWebsitesDownloading
                     return await client.GetAsync(url);
                 }));
             }
-            var firstFinishedTask = await Task.WhenAny(tasks);
-            Console.WriteLine($"Size of first downloaded website is: {firstFinishedTask}");
+            var firstFinishedTask = await await Task.WhenAny(tasks);
+            Console.WriteLine($"Size of first downloaded website is: {firstFinishedTask.Content.Headers.ContentLength}");
 
             Console.ReadKey();
         }
